@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 /**
@@ -45,7 +46,9 @@ public class NaiveBayes {
         while (buffer.hasMoreTokens()) {
              String phrase = buffer.nextToken();  // we get the phrase and the type
              String type = buffer.nextToken();
-             System.out.println(phrase + "phrase");
+             phrase = phrase.replaceAll("\\t"," ");
+             System.out.println(phrase + " phrase");
+             System.out.println(type + " type");
                // now I need to tokenize the phase
                StringTokenizer PhraseBuffer =new StringTokenizer(phrase," ");
                  while(PhraseBuffer.hasMoreTokens()){
@@ -62,7 +65,7 @@ public class NaiveBayes {
       outputCSVFile.close();         
 } // end of ConvertToCSV function.
    
-   public static Instances LoadARFF(String CSVFileName, String ARFFFile) throws IOException{
+   public static Instances CreateARFF(String CSVFileName, String ARFFFile) throws IOException{
        // we assign local variables for handling the files.
 
        String CSVInputFile = CSVFileName;
@@ -92,6 +95,15 @@ public class NaiveBayes {
   } // end of while
        return data;
    } // end of loadingARFF
+   
+   public static void SaveARFF(Instances data, String ArffFileName) throws IOException{
+       String ArffFile = ArffFileName;
+       Instances dataArff = data;
+       ArffSaver arffSaverInstance = new ArffSaver();  // we create an instance to save the ARFF file....
+       arffSaverInstance.setInstances(dataArff);
+       arffSaverInstance.setFile(new File(ArffFile));
+       arffSaverInstance.writeBatch();
+   } // end of SaveARFF records.... 
    
     }; // end of NaiveBayes class 
 
