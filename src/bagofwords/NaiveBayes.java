@@ -18,20 +18,20 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffLoader.ArffReader;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 /**
  *
- * @author heizel
+ * @author heizel Gonzalez 12021-01 
  */
 public class NaiveBayes {
  Instances data;
  
     public void NaiveBayes(){
     // constructor of this class. 
-    };
-    
+    };    
    
    public static void convertToCSV(String inputFileName ,String CSVFileName) throws IOException{
        // creamos el archivo de salida
@@ -66,7 +66,7 @@ public class NaiveBayes {
 } // end of ConvertToCSV function.
    
    public static Instances CreateARFF(String CSVFileName, String ARFFFile) throws IOException{
-       // we assign local variables for handling the files.
+       // When we first rime run a csv file and turn it into a ARFF file :)
 
        String CSVInputFile = CSVFileName;
        CSVLoader loader = new CSVLoader();
@@ -104,6 +104,18 @@ public class NaiveBayes {
        arffSaverInstance.setFile(new File(ArffFile));
        arffSaverInstance.writeBatch();
    } // end of SaveARFF records.... 
+   
+   public static Instances LoadARFF(String Filename) throws FileNotFoundException, IOException{
+     // loads a ARFF file previously saved.   
+       String file = Filename; 
+       BufferedReader reader = new BufferedReader(new FileReader(file));
+       ArffReader arff = new ArffReader(reader);
+       Instances dataset = arff.getData();
+       reader.close();
+     return dataset;
+     
+   } // end of void LOADARFF
+   
    
     }; // end of NaiveBayes class 
 
