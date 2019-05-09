@@ -37,8 +37,8 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.List;
-import bagofwords.unUsedClasses.Classification;
-import bagofwords.unUsedClasses.IClassificationTextNaiveBays;
+import bagofwords.Classification;
+import bagofwords.IClassificationTextNaiveBays;
 
 
 
@@ -59,7 +59,8 @@ public class NaiveBayesIA  {
  StringToWordVector filter; 
  Classification cls;
 private Instances test;
-
+ List<String> lstLoadData=new ArrayList<>();
+ public List<String> lstClassLabel=new ArrayList<>();
 
  
     public void NaiveBayes(){
@@ -146,7 +147,14 @@ private Instances test;
      return dataset;
      
    } // end of void LOADARFF
-
+   
+  /* public static void SaveModelOld(String Filename) throws IOException {
+       
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Filename));
+ //           out.writeObject(baselineNB);
+            out.close();
+   
+}*/
    
    public void loadModel(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
@@ -161,7 +169,18 @@ private Instances test;
        Instances mainData = LoadARFF(ArffFile); // we load the ArffFile file to the instance format
        evaluate(baselineNB, mainData);;
    }// end of Load Data 
-
+   
+   
+      public  void  LoadData2( String ArffFile) throws IOException, Exception{
+       Classifier baselineNB = new NaiveBayes();
+       Instances mainData = LoadARFF(ArffFile); // we load the ArffFile file to the instance format}
+       List<Classification> lstEvaluationDetail=new ArrayList<>();
+          lstEvaluationDetail = EvaluateNaiveBays();
+   
+          for (int i=0 ; i < lstEvaluationDetail.size(); i ++  ){
+              System.out.println(lstEvaluationDetail.);
+          }// end of while
+   }// end of Load Data 
    
       public static void  LoadNewData(String inputFile, String CSVFile, String ArffFile) throws IOException, Exception{
        String inputxt = inputFile;
@@ -209,6 +228,51 @@ private Instances test;
         output.close();
 	} // end of SaveModel void
       
+     
+      public void LoadDataset(String arffFileName) throws IOException 
+	{
+            trainedData= LoadARFF(arffFileName);
+
+	} // end of void LoadDataSet
+      
+       public void LearnNaiveBays() throws Exception 
+	{
+            trainedData.setClassIndex(trainedData.numAttributes()-1);
+            filter=new StringToWordVector();
+            classifier=new FilteredClassifier();
+            classifier.setFilter(filter);
+            classifier.setClassifier(new NaiveBayes());
+            classifier.buildClassifier(trainedData);
+	} // end of LearnNaiveBays void 
+      
+public void Predict(String OutPutFileName) throws Exception
+    {
+        List<String> lstLabels=new ArrayList<>();
+        test.setClassIndex(test.numAttributes()-1);
+        int numOfAttribute=test.numAttributes();
+        String createData;
+        for (int i = 0; i < test.numInstances(); i++) {
+           String FinalVal="";
+           double predict = classifier.classifyInstance(test.instance(i));
+           for(int k=0;k<numOfAttribute-1;k++)  {
+            createData= test.instance(i).stringValue(k);
+           FinalVal+= createData+ ",";
+           }
+           lstLabels.add(FinalVal+test.classAttribute().value((int) predict));
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(OutPutFileName))) {
+                for(String label:lstLabels)
+                {
+                    writer.write(label);
+                    writer.newLine();
+                }
+                writer.flush();
+            }
+         }
+    }// end of predict
+      
+      
+
 
 }; // end of NaiveBayes class 
 
