@@ -16,21 +16,33 @@ import static java.lang.System.err;
 import static java.time.Clock.system;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
+import weka.classifiers.meta.FilteredClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffLoader.ArffReader;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
+import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayesMultinomial;
+import weka.filters.unsupervised.attribute.StringToWordVector;
+
 
 /**
  *
  * @author heizel Gonzalez 12021-01 
  */
 public class NaiveBayes {
+// private variables...
  Instances data;
+ private FilteredClassifier classifier;
+ private Instances trainData;
+
+
+
  
     public void NaiveBayes(){
-    // constructor of this class. 
+        classifier = new FilteredClassifier();
+        classifier.setClassifier(new NaiveBayesMultinomial());
     };    
    
    public static void convertToCSV(String inputFileName ,String CSVFileName) throws IOException{
@@ -116,6 +128,20 @@ public class NaiveBayes {
      
    } // end of void LOADARFF
    
+   public static void SaveModel(String Filename) throws IOException {
+       
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Filename));
+            out.writeObject(classifier);
+            out.close();
+   
+}
+   
+   public void loadModel(String fileName) throws FileNotFoundException, IOException, ClassNotFoundException {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName));
+            Object tmp = in.readObject();
+            classifier = (FilteredClassifier) tmp; in.close();
+           
+}
    
     }; // end of NaiveBayes class 
 
