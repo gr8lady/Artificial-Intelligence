@@ -18,14 +18,15 @@ public class BagOfWords {
      */
     
     // we declare the NaiveBayes class here 
-    NaiveBayes Bayes = new NaiveBayes();
+    NaiveBayesIA Bayes = new NaiveBayesIA();
     
-    public static void main(String[] args) throws IOException {
-        // TODO code application logic here
-        // we do call the void to create the csv file
-        NaiveBayes.convertToCSV("test/input.txt", "test/output.csv");
-        Instances data=NaiveBayes.CreateARFF("test/output.csv","test/output.arff");
-        NaiveBayes.SaveARFF(data, "test/weka.arff");
+    public static void main(String[] args) throws IOException, Exception {
+     // declaring the files that will call everything....
+        
+     String input = "test/input.txt";
+     String CSVFile = "test/output.csv";
+     String ARFFfile = "test/file.arff";
+     NaiveBayesIA.LoadData(ARFFfile); 
     }
     
 }
