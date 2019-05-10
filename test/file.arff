@@ -1,26 +1,29 @@
 @relation output
 
-@attribute palabras {hello,world,how,are,you,acta,finale,hola,a,todo,el,mundo,i,know,friend,dont,tell,me,lies}
-@attribute idioma {ingles,latin,español}
+@attribute palabras {hola,mundo,hello,my,friend,a,tout,le,monde,ich,bin,helllo,pizza,mozzarella,giorno,giovanna,mother,day,liebe,dich}
+@attribute idioma {español,ingles,frances,aleman,italiano}
 
 @data
-hello,ingles
-world,ingles
-how,ingles
-are,ingles
-you,ingles
-acta,latin
-finale,latin
 hola,español
-a,español
-todo,español
-el,español
 mundo,español
-i,ingles
-know,ingles
-you,ingles
+hello,ingles
+my,ingles
 friend,ingles
-dont,ingles
-tell,ingles
-me,ingles
-lies,ingles
+a,frances
+tout,frances
+le,frances
+monde,frances
+ich,aleman
+bin,aleman
+helllo,ingles
+my,ingles
+friend,ingles
+pizza,italiano
+mozzarella,italiano
+giorno,italiano
+giovanna,italiano
+mother,ingles
+day,ingles
+ich,aleman
+liebe,aleman
+dich,aleman

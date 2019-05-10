@@ -5,6 +5,7 @@
  */
 package bagofwords;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
@@ -21,13 +22,20 @@ public class BagOfWords {
     
     public static void main(String[] args) throws IOException, Exception {
      // declaring the files that will call everything....
-        
-     String input = "test/input.txt";
+     
      String CSVFile = "test/output.csv";
      String ARFFfile = "test/file.arff";
-     NaiveBayesIA.LoadNewData(input, CSVFile, ARFFfile);
-  //   NaiveBayesIA.LoadData1(ARFFfile); 
-  //   NaiveBayesIA.ClassifierWithFilter();
+     
+      Scanner myObj = new Scanner(System.in);
+      System.out.println("ingrese el nombre del archivo a evaluar");
+      String input = myObj.nextLine();
+      NaiveBayesIA.LoadNewData(input, CSVFile, ARFFfile);
     }
     
 }
+
+    // NaiveBayesIA.LoadNewData(input, CSVFile, ARFFfile);
+    //   NaiveBayesIA.ClassifierWithFilter();
+//NaiveBayesIA.LoadData1(ARFFfile); 
+   //   String input = "test/input3.txt";
+  // NaiveBayesIA.LoadData1(ARFFfile, input);
