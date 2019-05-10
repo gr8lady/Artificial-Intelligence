@@ -5,7 +5,6 @@
  */
 package bagofwords;
 import java.io.IOException;
-import weka.core.Instances;
 
 /**
  *
@@ -26,7 +25,9 @@ public class BagOfWords {
      String input = "test/input.txt";
      String CSVFile = "test/output.csv";
      String ARFFfile = "test/file.arff";
-     NaiveBayesIA.LoadData(ARFFfile); 
+     NaiveBayesIA.LoadNewData(input, CSVFile, ARFFfile);
+  //   NaiveBayesIA.LoadData1(ARFFfile); 
+  //   NaiveBayesIA.ClassifierWithFilter();
     }
     
 }

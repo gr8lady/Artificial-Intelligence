@@ -1,7 +1,7 @@
 @relation output
 
-@attribute att1 {hello,world,how,are,you,acta,finale,hola,a,todo,el,mundo,I,know,friend,dont,tell,me,lies}
-@attribute att2 {ingles,latin,español}
+@attribute palabras {hello,world,how,are,you,acta,finale,hola,a,todo,el,mundo,i,know,friend,dont,tell,me,lies}
+@attribute idioma {ingles,latin,español}
 
 @data
 hello,ingles
@@ -16,47 +16,7 @@ a,español
 todo,español
 el,español
 mundo,español
-I,ingles
-know,ingles
-you,ingles
-friend,ingles
-dont,ingles
-tell,ingles
-me,ingles
-lies,ingles
-hello,ingles
-world,ingles
-how,ingles
-are,ingles
-you,ingles
-acta,latin
-finale,latin
-hola,español
-a,español
-todo,español
-el,español
-mundo,español
-I,ingles
-know,ingles
-you,ingles
-friend,ingles
-dont,ingles
-tell,ingles
-me,ingles
-lies,ingles
-hello,ingles
-world,ingles
-how,ingles
-are,ingles
-you,ingles
-acta,latin
-finale,latin
-hola,español
-a,español
-todo,español
-el,español
-mundo,español
-I,ingles
+i,ingles
 know,ingles
 you,ingles
 friend,ingles

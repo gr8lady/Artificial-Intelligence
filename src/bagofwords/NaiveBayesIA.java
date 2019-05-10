@@ -37,8 +37,19 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.List;
-import bagofwords.unUsedClasses.Classification;
-import bagofwords.unUsedClasses.IClassificationTextNaiveBays;
+//import bagofwords.unUsedClasses.Classification;
+//import bagofwords.unUsedClasses.IClassificationTextNaiveBays;
+import static com.oracle.nio.BufferSecrets.instance;
+import weka.classifiers.trees.J48;
+import weka.core.Attribute;
+import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.stemmers.LovinsStemmer;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
 
 
 
@@ -57,8 +68,9 @@ public class NaiveBayesIA  {
  Classifier baselineNB;
  Instances trainedData;
  StringToWordVector filter; 
- Classification cls;
+// Classification cls;
 private Instances test;
+ 
 
 
  
@@ -68,8 +80,7 @@ private Instances test;
          classifier.setClassifier(new NaiveBayesMultinomial());
          ensembleLib.addModel("weka.classifiers.bayes.NaiveBayes");
          EnsembleLibrary ensembleLib = new EnsembleLibrary();
-         cls= new Classification();
-         
+      //   cls= new Classification();     
     };    
    
    public static void convertToCSV(String inputFileName ,String CSVFileName) throws IOException{
@@ -92,7 +103,9 @@ private Instances test;
                StringTokenizer PhraseBuffer =new StringTokenizer(phrase," ");
                  while(PhraseBuffer.hasMoreTokens()){
                        String word = PhraseBuffer.nextToken();
+                        word = word.toLowerCase();
                         record = word.trim() + "\t" + type.trim(); 
+                        record = record.toLowerCase();
                        System.out.println(record + " record");
                        outputCSVFile.println(record); // we save the file
                  } // end while phrase
@@ -114,9 +127,11 @@ private Instances test;
        loader.setSource(new File(CSVInputFile)); // we set the CSV file to convert
        data = loader.getDataSet();
        System.setErr(err);
-       data.setClassIndex(data.numAttributes()-1);// the last field is the attributes    
+       data.setClassIndex(data.numAttributes()-1);// the last field is the attributes          
+        
   // To scan through all the records of the CSV file
        Enumeration all = data.enumerateInstances();
+       
        return data; // return data loaded from the CSV file
    } // end of createARFF
    
@@ -124,6 +139,8 @@ private Instances test;
        String ArffFile = ArffFileName;
        Instances dataArff = data;
        ArffSaver arffSaverInstance = new ArffSaver();  // we create an instance to save the ARFF file....
+       dataArff.renameAttribute(0, "palabras");
+       dataArff.renameAttribute(1,"idioma");
        arffSaverInstance.setInstances(dataArff);
        arffSaverInstance.setFile(new File(ArffFile));
        arffSaverInstance.writeBatch();
@@ -143,6 +160,7 @@ private Instances test;
         }// end of while dataset...
         
        reader.close();
+       
      return dataset;
      
    } // end of void LOADARFF
@@ -159,7 +177,15 @@ private Instances test;
    public static void  LoadData( String ArffFile) throws IOException, Exception{
        Classifier baselineNB = new NaiveBayes();
        Instances mainData = LoadARFF(ArffFile); // we load the ArffFile file to the instance format
-       evaluate(baselineNB, mainData);;
+        ClassifierWithFilter(baselineNB, mainData, ArffFile);
+   }// end of Load Data 
+   
+   
+      public static void  LoadData1( String ArffFile) throws IOException, Exception{
+       Classifier baselineNB = new NaiveBayes();
+       Instances mainData = LoadARFF(ArffFile); // we load the ArffFile file to the instance format
+       ClassifierWithFilter(baselineNB, mainData, ArffFile);
+     //    evaluate(baselineNB, mainData);
    }// end of Load Data 
 
    
@@ -171,36 +197,23 @@ private Instances test;
        convertToCSV(inputxt,CSVFile);  // first we convert the input txt file to CSV format
        Instances mainData = loadCsvData(CSVFile); // we load the CSV file to the instance format
        SaveARFF(mainData, ArffFile);  // we save the Arff File format
-       evaluate(baselineNB, mainData);
+       ClassifierWithFilter(baselineNB, mainData, ArffFile);
        
    }// end of Load New Data 
    
       public static void evaluate(Classifier model, Instances data) throws Exception {
           // this code shows the Confussion Matrix ....
 			Instances train_data = data;
+                        model.buildClassifier(data);
 			// cross-validate the data
+                        train_data.setClassIndex(data.numAttributes() - 1);
 			Evaluation eval = new Evaluation(train_data);
 			eval.crossValidateModel(model, train_data, 5, new Random(1), new Object[] {});
                         System.out.println(eval.toSummaryString()); 
                         System.out.println(eval.toMatrixString());
-	}  
-      
-      // this are the functions to evaluate the Strings....
-      
-      public  List<Classification> EvaluateNaiveBays() throws Exception{
-          List<Classification> lstEvaluationDetail=new ArrayList<>();
-	trainedData.setClassIndex(trainedData.numAttributes()-1);
-        filter=new StringToWordVector();
-        classifier=new FilteredClassifier();
-        classifier.setFilter(filter);
-        classifier.setClassifier(new NaiveBayes());
-        Evaluation eval=new Evaluation(trainedData);
-        eval.crossValidateModel(classifier, trainedData, 4, new Random(1));
-        //System.out.println(lstEvaluationDetail.toString());
-        return lstEvaluationDetail;
-          
-      } // end of EvaluateNaiveBays void
-      
+	} // end of void evaluate
+        
+         
       public void SaveModel(String modelName) throws FileNotFoundException, IOException
 	{
 		ObjectOutputStream output=new ObjectOutputStream(
@@ -209,9 +222,62 @@ private Instances test;
         output.close();
 	} // end of SaveModel void
       
+      
+  public static void ClassifierWithFilter(Classifier model, Instances data, String FileName ) throws Exception{
+           //load dataset
+    DataSource source = new DataSource(FileName);
+    Instances train_data = data; /// accuracy of model
+    Instances dataset = source.getDataSet();
+     NaiveBayes nb = new NaiveBayes();
+    dataset.setClassIndex(dataset.numAttributes()-1); //set class index to the last attribute
+    train_data.setClassIndex(data.numAttributes() - 1);
+    nb.buildClassifier(train_data);
+			// cross-validate the data
+    Evaluation eval = new Evaluation(train_data);
+    eval.crossValidateModel(model, train_data, 5, new Random(1), new Object[] {});
+    System.out.println("Model performance:\n"+eval.toSummaryString());
+    System.out.println(eval.toMatrixString());
+    System.out.println(nb.toString());
 
+      }// end of void ClassifierWithFilter
+  
+  /*public static void ClassifierWithFilter() throws Exception{
+           //load dataset
+    DataSource source = new DataSource("test/file.arff");
+    Instances train_data = source.getDataSet(); /// accuracy of model
+    Instances dataset = source.getDataSet();
+    dataset.setClassIndex(dataset.numAttributes()-1); //set class index to the last attribute
+    J48 tree = new J48();//the base classifier
+    NaiveBayes nb = new NaiveBayes();
+    nb.buildClassifier(train_data);
+    StringToWordVector filter = new StringToWordVector();    //the filter
+    filter.setInputFormat(dataset);
+    filter.setIDFTransform(true);
+  
+    LovinsStemmer stemmer = new LovinsStemmer(); //  filter.setUseStoplist(true);
+    filter.setStemmer(stemmer);
+    filter.setLowerCaseTokens(true);
+    FilteredClassifier fc = new FilteredClassifier(); //Create the FilteredClassifier object
+    fc.setFilter(filter); //specify filter
+    fc.setClassifier(tree);  //specify base classifier
+    fc.buildClassifier(dataset);  //Build the meta-classifier
+    			// cross-validate the data
+   // Evaluation eval = new Evaluation(train_data);
+  //  eval.crossValidateModel(model, train_data, 5, new Random(1), new Object[] {});
+    
+   //    System.out.println("Model performance:\n"+eval.toSummaryString());
+  // System.out.println(eval.toMatrixString());
+    System.out.println(nb.toString());
+    
+    System.out.println(tree.graph());
+    System.out.println(tree);
+    
+    
+    //return tree;
+  
+      }// end of void ClassifierWithFilter*/
+  
 }; // end of NaiveBayes class 
 
 
     
-
