@@ -1,0 +1,27 @@
+public static double[]CrossValidate ( String CSVFile, String ArffFileName ) throws IOException, Exception{
+       double results[] = new double[4];
+       String CSVFilename = CSVFile;
+       String ArffFilename = ArffFileName;
+       double overallScore = 0.0 ;
+       Classifier model = baselineNB;
+      Instances train_data = loadCsvData(CSVFilename);
+      Evaluation eval = new Evaluation(train_data);
+      eval.crossValidateModel(model, train_data, 5, new Random(1),new Object[] {});
+      
+      // save results
+      for (int i=0 ; i< eval.numInstances(); i++){
+      results[i] = eval.areaUnderROC(train_data.classAttribute().indexOfValue("1"));
+			overallScore += results[i];
+			System.out.println(results[i]);
+      }
+      return results;
+   }// end of evaluate void.
+   
+
+
+   Instances data = NaiveBayesIA.LoadARFF("test/input.txt");
+        // TODO code application logic here
+        // we do call the void to create the csv file   
+         Instances data=NaiveBayesIA.CreateARFF("test/output.csv","test/output.arff");
+     //   NaiveBayes.SaveARFF(data, "test/weka.arff");
+          NaiveBayesIA.CrossValidate(data, "test/output.csv","test/output.arff");
